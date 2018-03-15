@@ -382,7 +382,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
             final Collection<CfDef> updatedCfs = Lists.newArrayListWithExpectedSize(metadataForTables.size());
 
             List<CfDef> knownCfs = clientPool.runWithRetry(client ->
-                    client.rawClient().describe_keyspace(config.getKeyspaceOrThrow()).getCf_defs());
+                    client.describe_keyspace(config.getKeyspaceOrThrow()).getCf_defs());
 
             for (CfDef clusterSideCf : knownCfs) {
                 TableReference tableRef = CassandraKeyValueServices.tableReferenceFromCfDef(clusterSideCf);
@@ -431,7 +431,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
                             client.rawClient(),
                             config));
             KsDef ksDef = clientPool.runWithRetry(client ->
-                    client.rawClient().describe_keyspace(config.getKeyspaceOrThrow()));
+                    client.describe_keyspace(config.getKeyspaceOrThrow()));
             strategyOptions = Maps.newHashMap(ksDef.getStrategy_options());
 
             if (dcs.size() == 1) {
@@ -1091,7 +1091,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
             boolean successful = true;
             try {
                 queryRunner.run(client, tableRef, () -> {
-                    client.rawClient().truncate(internalTableName(tableRef));
+                    client.truncate(internalTableName(tableRef));
                     return true;
                 });
             } catch (TException e) {
@@ -1450,7 +1450,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
         clientPool.runWithRetry(client -> {
             for (Entry<TableReference, byte[]> tableEntry : tableNamesToTableMetadata.entrySet()) {
                 try {
-                    client.rawClient().system_add_column_family(ColumnFamilyDefinitions.getCfDef(
+                    client.system_add_column_family(ColumnFamilyDefinitions.getCfDef(
                             config.getKeyspaceOrThrow(),
                             tableEntry.getKey(),
                             config.gcGraceSeconds(),
@@ -1671,7 +1671,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
             clientPool.runWithRetry(client -> {
                 if (possiblyNeedToPerformSettingsChanges) {
                     for (CfDef cf : updatedCfs) {
-                        client.rawClient().system_update_column_family(cf);
+                        client.system_update_column_family(cf);
                     }
 
                     CassandraKeyValueServices.waitForSchemaVersions(
@@ -2060,7 +2060,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
             float tombstoneThresholdRatio) {
         try {
             clientPool.runWithRetry((FunctionCheckedException<CassandraClient, Void, Exception>) client -> {
-                KsDef ks = client.rawClient().describe_keyspace(keyspace);
+                KsDef ks = client.describe_keyspace(keyspace);
                 List<CfDef> cfs = ks.getCf_defs();
                 for (CfDef cf : cfs) {
                     if (cf.getName().equalsIgnoreCase(internalTableName(tableRef))) {
@@ -2068,7 +2068,7 @@ public class CassandraKeyValueServiceImpl extends AbstractKeyValueService implem
                         cf.setCompaction_strategy_options(ImmutableMap.of(
                                 "tombstone_threshold",
                                 String.valueOf(tombstoneThresholdRatio)));
-                        client.rawClient().system_update_column_family(cf);
+                        client.system_update_column_family(cf);
                         CassandraKeyValueServices.waitForSchemaVersions(
                                 config,
                                 client.rawClient(),
