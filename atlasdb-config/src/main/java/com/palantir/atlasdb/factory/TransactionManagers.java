@@ -585,8 +585,7 @@ public abstract class TransactionManagers {
 
         TimelockService instrumentedTimelockService = new InstrumentedTimelockService(
                 timelockServiceWithBatching,
-                AtlasDbMetrics.getMetricRegistry()
-        );
+                AtlasDbMetrics.getMetricRegistry());
 
         return ImmutableLockAndTimestampServices.builder()
                 .from(lockAndTimestampServices)
